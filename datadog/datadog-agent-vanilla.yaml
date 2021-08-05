@@ -81,9 +81,9 @@ spec:
             - name: DD_APM_ENABLED
               value: "false"
             - name: DD_LOGS_ENABLED
-              value: "false"
+              value: "true"
             - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
-              value: "false"
+              value: "true"
             - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
               value: "true"
             - name: DD_HEALTH_PORT
@@ -94,6 +94,8 @@ spec:
               value: "datadoghq.eu"
             - name: DD_KUBELET_TLS_VERIFY
               value: "false"
+            - name: DD_CONTAINER_EXCLUDE_LOGS
+              value: "name:datadog-agent"
           volumeMounts:
             - name: installinfo
               subPath: install_info
@@ -120,6 +122,8 @@ spec:
               mountPath: /host/sys/fs/cgroup
               mountPropagation: None
               readOnly: true
+            - name: pointerdir
+              mountPath: /opt/datadog-agent/run
           livenessProbe:
             failureThreshold: 6
             httpGet:
@@ -270,6 +274,9 @@ spec:
         - hostPath:
             path: /etc/passwd
           name: passwd
+        - hostPath:
+            path: /opt/daatadog-agent/run
+          name: pointerdir
       tolerations:
       affinity: {}
       serviceAccountName: "datadog-agent"
